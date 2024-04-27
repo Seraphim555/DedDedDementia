@@ -3,14 +3,17 @@ using UnityEngine.UI;
 
 public class DoctorController : MonoBehaviour
 {
-   [SerializeField] public PersonController person;
+   [SerializeField] private GameObject patientPrefab;
+    private GameObject patientInstance = null;
     private PersonController personController = null;
     public float moveSpeed = 5f;
 
 
     private void Start()
     {
-        personController = person.GetComponent<PersonController>();
+        patientInstance = Instantiate(patientPrefab);
+
+        personController = patientInstance.GetComponent<PersonController>();
     }
 
     private void Update()
@@ -18,10 +21,17 @@ public class DoctorController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             SendLeft();
+            
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             SendRight();
+        }
+        if (patientInstance == null)
+        {
+            patientInstance = Instantiate(patientPrefab);
+
+            personController = patientInstance.GetComponent<PersonController>();
         }
     }
 

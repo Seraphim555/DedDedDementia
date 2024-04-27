@@ -3,38 +3,50 @@ using UnityEngine;
 public class PersonController : MonoBehaviour
 {
     public float moveSpeed = 14f;
-    public GameObject panel;
-    public Person currentPerson = null;
-    
+    public Person person = null;
+    private Vector3 endRightPosition = new Vector3(8, -2.61f, 0);
+    private Vector3 endLeftPosition = new Vector3(-8, -2.61f, 0);
+
     private bool moveLeft;
     private bool moveRight;
-    private bool madeDecision;
 
     private void Start()
     {
-        madeDecision = false;
-        currentPerson = Person.GenerateRandomPerson();
-        panel.SetActive(false);
+        person = Person.GenerateRandomPerson();
     }
 
     private void Update()
     {
-        if (moveRight && !madeDecision) {
-            transform.Translate(Vector2.right * (moveSpeed * Time.deltaTime));
-        } else if (moveLeft && !madeDecision)
+        if (moveRight) {
+            if (transform.position != endRightPosition)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, endRightPosition, moveSpeed * Time.deltaTime);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        } else if (moveLeft)
         {
-            transform.Translate(Vector2.left * (moveSpeed * Time.deltaTime));
+            if (transform.position != endLeftPosition)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, endLeftPosition, moveSpeed * Time.deltaTime);
+            }
+            else 
+            { 
+                Destroy(gameObject);
+            }
         }
     }
 
     public void MoveLeft()
     {
         moveLeft = true;
+
     }
 
     public void MoveRight()
     {
-        
         moveRight = true;
     }
 }
