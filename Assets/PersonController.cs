@@ -4,8 +4,8 @@ public class PersonController : MonoBehaviour
 {
     public float moveSpeed = 14f;
     public Person person = null;
-    private Vector3 endRightPosition = new Vector3(8, -2.61f, 0);
-    private Vector3 endLeftPosition = new Vector3(-8, -2.61f, 0);
+    private Vector3 endRightPosition = new Vector3(8, -1.61f, 0);
+    private Vector3 endLeftPosition = new Vector3(-8, -1.61f, 0);
 
     [SerializeField] Animator animator;
 
@@ -37,7 +37,7 @@ public class PersonController : MonoBehaviour
             if (transform.position != endLeftPosition)
             {
                 animator.SetBool("canWalk", true);
-                transform.localScale = Vector3.left;
+                gameObject.GetComponent<SpriteRenderer>().flipX = true;
                 transform.position = Vector3.MoveTowards(transform.position, endLeftPosition, moveSpeed * Time.deltaTime);
                 isRightChoice=true;
             }
