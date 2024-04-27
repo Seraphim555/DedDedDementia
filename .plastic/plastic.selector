@@ -1,0 +1,4 @@
+repository "Peace Doc@fedorovlev2005@cloud"
+  path "/"
+    br "/main"
+    co "/main"
