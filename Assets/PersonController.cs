@@ -11,6 +11,7 @@ public class PersonController : MonoBehaviour
 
     private bool moveLeft;
     private bool moveRight;
+    public static bool isRightChoice = true;
 
     private void Start()
     {
@@ -24,10 +25,12 @@ public class PersonController : MonoBehaviour
             {
                 animator.SetBool("canWalk", true);
                 transform.position = Vector3.MoveTowards(transform.position, endRightPosition, moveSpeed * Time.deltaTime);
+                isRightChoice = true;
             }
             else
             {
                 Destroy(gameObject);
+                isRightChoice = false;
             }
         } else if (moveLeft)
         {
@@ -36,10 +39,12 @@ public class PersonController : MonoBehaviour
                 animator.SetBool("canWalk", true);
                 transform.localScale = Vector3.left;
                 transform.position = Vector3.MoveTowards(transform.position, endLeftPosition, moveSpeed * Time.deltaTime);
+                isRightChoice=true;
             }
             else 
             { 
                 Destroy(gameObject);
+                isRightChoice = false;
             }
         }
     }
