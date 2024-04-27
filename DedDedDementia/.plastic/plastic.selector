@@ -1,0 +1,4 @@
+repository "DedDedDementia@fedorovlev2005@cloud"
+  path "/"
+    br "/main"
+    co "/main"
