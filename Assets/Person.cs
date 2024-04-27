@@ -1,47 +1,184 @@
 using System;
+using UnityEditor.Experimental.GraphView;
+
+
+public class Address
+{
+    public string street;
+    public int num;
+    public char letter;
+
+    public Address(string street, int num, char letter)
+    {
+        this.street = street;
+        this.num = num;
+        this.letter = letter;
+    }
+
+    public static Address GenerateAdress()
+    {
+        string[] streets =
+        {
+            "Ленина ул.",
+            "Куйбышева ул.",
+            "Малышева ул.",
+            "Шейнкмана ул.",
+            "Белинского ул.",
+            "Толмачева ул.",
+            "Бажова ул.",
+            "Свердлова ул.",
+            "Гагарина ул.",
+            "Репина ул.",
+            "Пролетарская ул.",
+            "Вильямса ул.",
+            "Красноармейская ул.",
+            "Пушкина ул.",
+            "Красная ул.",
+            "Советская ул.",
+            "Парковая ул.",
+            "8 Марта ул.",
+            "Попова ул.",
+            "Мичурина ул."
+        };
+        string randomStreet = streets[UnityEngine.Random.Range(0, streets.Length)];
+
+        // Генерируем случайный номер дома от 1 до 100
+        int randomHouseNumber = UnityEngine.Random.Range(1, 101);
+
+        // Генерируем случайную букву для номера дома
+        char randomLetter = (char)UnityEngine.Random.Range('А', 'Г' + 1);
+
+        // Формируем адрес
+        return new Address(randomStreet, randomHouseNumber, randomLetter);
+    }
+    
+    public string GetAddressString()
+    {
+        return $"{street}, {num}-{letter}";
+    }
+}
 
 public class Person
 {
     public string Name { get; private set; }
     public DateTime DateOfBirth { get; private set; }
-    public string Gender { get; private set; }
+    public bool Gender { get; private set; }
     public string Address { get; private set; }
-
+    
+    public string Description { get; private set; }
+    public string[] Diseases { get; private set; }
     public bool Dementia { get; private set; }
+    
+    private static string[] _commonDescriptions = {
+        "Был активным участником спортивной команды в молодости.",
+        "Изучал программирование и стал успешным разработчиком ПО.",
+        "Путешествовал по миру и изучал различные культуры.",
+        "Увлекался изобразительным искусством и проводил много времени в студии.",
+        "Посвятил себя работе в области медицины и стал врачом-хирургом.",
+        "Активно занимался волонтёрской деятельностью и помогал нуждающимся.",
+        "Успешно завершил образование в престижном университете.",
+        "Участвовал в благотворительных мероприятиях и собирал средства для помощи больным."
+    };
+    private static string[] _dementiaDescriptions = {
+        "Часто забывает своё имя и место проживания.",
+        "Видит и слышит непонятные вещи, которых нет на самом деле.",
+        "Рассказывает истории, которые кажутся невероятными или невозможными.",
+        "Изменения в поведении, например, агрессивность или паранойя.",
+        "Часто путает людей и события из прошлого с настоящим."
+    };
 
-    public Person(string name, DateTime dateOfBirth, string gender, string address, bool dementia)
+    public Person(string name, DateTime dateOfBirth, bool gender, Address address,  string[] diseases, string description, bool dementia)
     {
         Name = name;
         DateOfBirth = dateOfBirth;
         Gender = gender;
-        Address = address;
+        Address = address.GetAddressString();
         Dementia = dementia;
+        Diseases = diseases;
+        Description = description;
+
     }
 
-    // Method to generate random person's information
     public static Person GenerateRandomPerson()
     {
-        // Generate random name
-        string[] names = { "John", "Alice", "Michael", "Emma", "James", "Olivia", "Robert", "Sophia" };
-        string randomName = names[UnityEngine.Random.Range(0, names.Length)];
+        // Generate random name based on gender
+        string[] maleNames = { "Ваня", "Миша", "Владимир", "Тимофей", "Петр", "Александр", "Иван", "Сергей", "Дмитрий", "Николай", "Артем" };
+
+        string[] femaleNames = { "Анна", "Мария", "Екатерина", "Александра", "София", "Виктория", "Ольга", "Татьяна", "Ирина", "Елена", "Анастасия" };
+
+        bool randomGender = UnityEngine.Random.Range(0, 2) == 0; // true for male, false for female
+
+        var randomName = randomGender ? maleNames[UnityEngine.Random.Range(0, maleNames.Length)] : femaleNames[UnityEngine.Random.Range(0, femaleNames.Length)];
 
         // Generate random date of birth (age between 18 and 80)
         DateTime randomDateOfBirth = DateTime.Now.AddYears(-UnityEngine.Random.Range(18, 80));
 
-        // Generate random gender
-        string[] genders = { "Male", "Female" };
-        string randomGender = genders[UnityEngine.Random.Range(0, genders.Length)];
-
         // Generate random address (for simplicity, let's use a placeholder)
-        string randomAddress = "123 Main St, City, Country";
+        Address randomAddress = global::Address.GenerateAdress();
 
         // Generate random dementia status
         bool randomDementia = UnityEngine.Random.Range(0, 2) == 0; // 50% chance of having dementia
 
         // Create and return the Person object
-        return new Person(randomName, randomDateOfBirth, randomGender, randomAddress, randomDementia);
+        return new Person(randomName, randomDateOfBirth, randomGender, randomAddress, GenerateRandomDiseases(), GenerateRandomDescription(randomDementia), randomDementia);
     }
 
+    private static string GenerateRandomDescription(bool hasDementia){
+        if (hasDementia)
+        {
+            string[] allDescriptions = new string[_commonDescriptions.Length + _dementiaDescriptions.Length];
+            _commonDescriptions.CopyTo(allDescriptions, 0);
+            _dementiaDescriptions.CopyTo(allDescriptions, _commonDescriptions.Length);
+            return allDescriptions[UnityEngine.Random.Range(0, allDescriptions.Length)];
+        }
+        else
+        {
+            return _commonDescriptions[UnityEngine.Random.Range(0, _commonDescriptions.Length)];
+        }
+    }
+
+    
+    private static string[] GenerateRandomDiseases()
+    {
+        string[] mentalDisorders = {
+            "Депрессия",
+            "Биполярное расстройство",
+            "Шизофрения",
+            "Тревожные расстройства",
+            "Расстройства аутистического спектра",
+            "Посттравматическое стрессовое расстройство",
+            "Нарциссическое расстройство личности",
+            "Обсессивно-компульсивное расстройство",
+            "Эпилепсия",
+            "Деменция",
+            "Психопатия",
+            "Генерализованное тревожное расстройство",
+            "Паническое расстройство",
+            "Соматоформные расстройства",
+            "Проблемы с пищеводом",
+            "Нарушения сна",
+            "Паранойя",
+            "Расстройства аутоагрессии",
+            "Личностные расстройства",
+            "Расстройства аффективного спектра"
+        };
+
+        // Количество заболеваний, которые нужно сгенерировать
+        int numberOfDiseases = UnityEngine.Random.Range(1, 5); // Генерируем от 1 до 4 заболеваний
+
+        // Создаем массив для хранения сгенерированных заболеваний
+        string[] generatedDiseases = new string[numberOfDiseases];
+
+        // Выбираем случайные заболевания из списка
+        for (int i = 0; i < numberOfDiseases; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, mentalDisorders.Length);
+            generatedDiseases[i] = mentalDisorders[randomIndex];
+        }
+
+        return generatedDiseases;
+    }
+    
     // Method to print person's information
     public void PrintInformation()
     {
@@ -50,5 +187,7 @@ public class Person
         Console.WriteLine($"Gender: {Gender}");
         Console.WriteLine($"Address: {Address}");
         Console.WriteLine($"Dementia: {(Dementia ? "Yes" : "No")}");
+        Console.WriteLine($"Diseases: {Diseases.Length}, {Diseases}");
+        Console.WriteLine($"Description: {Description}" );
     }
 }
