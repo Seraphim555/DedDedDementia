@@ -18,6 +18,12 @@ public class DoctorController : MonoBehaviour
 
     private void Update()
     {
+        if (patientInstance == null)
+        {
+            patientInstance = Instantiate(patientPrefab);
+
+            personController = patientInstance.GetComponent<PersonController>();
+        }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             SendLeft();
@@ -27,12 +33,7 @@ public class DoctorController : MonoBehaviour
         {
             SendRight();
         }
-        if (patientInstance == null)
-        {
-            patientInstance = Instantiate(patientPrefab);
-
-            personController = patientInstance.GetComponent<PersonController>();
-        }
+        
     }
 
 

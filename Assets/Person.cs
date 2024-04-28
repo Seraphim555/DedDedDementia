@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using UnityEditor.Experimental.GraphView;
+
 
 
 public class Address
@@ -68,24 +70,6 @@ public class Person
     public string Description { get; private set; }
     public string[] Diseases { get; private set; }
     public bool Dementia { get; private set; }
-    
-    private static string[] _commonDescriptions = {
-        "Был активным участником спортивной команды в молодости.",
-        "Изучал программирование и стал успешным разработчиком ПО.",
-        "Путешествовал по миру и изучал различные культуры.",
-        "Увлекался изобразительным искусством и проводил много времени в студии.",
-        "Посвятил себя работе в области медицины и стал врачом-хирургом.",
-        "Активно занимался волонтёрской деятельностью и помогал нуждающимся.",
-        "Успешно завершил образование в престижном университете.",
-        "Участвовал в благотворительных мероприятиях и собирал средства для помощи больным."
-    };
-    private static string[] _dementiaDescriptions = {
-        "Часто забывает своё имя и место проживания.",
-        "Видит и слышит непонятные вещи, которых нет на самом деле.",
-        "Рассказывает истории, которые кажутся невероятными или невозможными.",
-        "Изменения в поведении, например, агрессивность или паранойя.",
-        "Часто путает людей и события из прошлого с настоящим."
-    };
 
     public Person(string name, DateTime dateOfBirth, bool gender, Address address,  string[] diseases, string description, bool dementia)
     {
@@ -120,21 +104,22 @@ public class Person
         bool randomDementia = UnityEngine.Random.Range(0, 2) == 0; // 50% chance of having dementia
 
         // Create and return the Person object
-        return new Person(randomName, randomDateOfBirth, randomGender, randomAddress, GenerateRandomDiseases(), GenerateRandomDescription(randomDementia), randomDementia);
+        return new Person(randomName, randomDateOfBirth, randomGender, randomAddress, GenerateRandomDiseases(), null, randomDementia);
     }
 
-    private static string GenerateRandomDescription(bool hasDementia){
+    private static string GenerateRandomDescription(bool hasDementia, bool gender)
+    {
+        string filePath = "CoolStoryBob";
+
         if (hasDementia)
         {
-            string[] allDescriptions = new string[_commonDescriptions.Length + _dementiaDescriptions.Length];
-            _commonDescriptions.CopyTo(allDescriptions, 0);
-            _dementiaDescriptions.CopyTo(allDescriptions, _commonDescriptions.Length);
+            string[] allDescriptions = File.ReadAllLines(filePath +"//description_demention.txt");
             return allDescriptions[UnityEngine.Random.Range(0, allDescriptions.Length)];
         }
-        else
-        {
-            return _commonDescriptions[UnityEngine.Random.Range(0, _commonDescriptions.Length)];
-        }
+
+        string[] normalDescriptions;
+        normalDescriptions = gender ? File.ReadAllLines(filePath + "//description_male.txt") : File.ReadAllLines(filePath + "//description_female.txt");
+        return normalDescriptions[UnityEngine.Random.Range(0, normalDescriptions.Length)];
     }
 
     

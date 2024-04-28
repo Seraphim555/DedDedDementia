@@ -4,8 +4,8 @@ public class PersonController : MonoBehaviour
 {
     public float moveSpeed = 14f;
     public Person person = null;
-    private Vector3 endRightPosition = new Vector3(8, -2.61f, 0);
-    private Vector3 endLeftPosition = new Vector3(-8, -2.61f, 0);
+    private Vector3 endRightPosition = new Vector3(8, -1.61f, 0);
+    private Vector3 endLeftPosition = new Vector3(-8, -1.61f, 0);
 
     [SerializeField] Animator animator;
 
@@ -41,7 +41,24 @@ public class PersonController : MonoBehaviour
             {
                 Destroy(gameObject);
                 isRightChoice = false;
+<<<<<<< HEAD
                 audioSource.PlayOneShot(wrongChoiceDementiONAudio);
+=======
+            }
+        } else if (moveLeft)
+        {
+            if (transform.position != endLeftPosition)
+            {
+                animator.SetBool("canWalk", true);
+                gameObject.GetComponent<SpriteRenderer>().flipX = true;
+                transform.position = Vector3.MoveTowards(transform.position, endLeftPosition, moveSpeed * Time.deltaTime);
+                isRightChoice=true;
+            }
+            else 
+            { 
+                Destroy(gameObject);
+                isRightChoice = false;
+>>>>>>> 27598bd333b9173906a4c9ae6cdf6696cf3e72f2
             }
         }
         else if (moveLeft)
