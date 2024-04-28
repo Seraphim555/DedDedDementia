@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class MedicalCard : MonoBehaviour
+public class MedicalCard
 {
 
     public const string Title = "Медицинская карта";
@@ -26,5 +26,11 @@ public class MedicalCard : MonoBehaviour
         Fullname = fullname;
         Description = description;
         Diseases = diseases;
+    }
+
+    public override string ToString()
+    {
+        string diseasesString = string.Join(", ", Diseases);
+        return $"{Title}\nАдрес: {Address}\nДата рождения: {DateOfBirth}\nИмя: {Fullname}\nОписание: {Description}\nБолезни: {diseasesString}";
     }
 }

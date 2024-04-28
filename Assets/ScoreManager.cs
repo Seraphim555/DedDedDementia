@@ -11,10 +11,13 @@ public class ScoreManager : MonoBehaviour
     public int penalty = 100;
     public int reward = 100;
 
+    [SerializeField] private Animator animator;
     public float animationDuration = 10f; // Длительность анимации в секундах
-    private static bool isRightChoice = PersonController.isRightChoice;
+    private bool isRightChoice = DoctorController.isRightChoice;
     private bool animationEnded = AnimationEventEnder.isAnimationEnded;
 
+    public static bool hasMadeChoice = false;
+    private float remainingTime;
 
     void Start()
     {
@@ -26,34 +29,59 @@ public class ScoreManager : MonoBehaviour
         {
             Debug.LogError("TextMeshPro component is not found!");
         }
+
+        remainingTime = animationDuration;
     }
 
     private void Update()
     {
-        // Проверяем, если анимация уже началась и игрок не успел совершить действие
-        if (animationEnded || !isRightChoice) // Предполагается, что "Fire1" - это кнопка, которую игрок должен нажать
+        // Уменьшаем оставшееся время
+        remainingTime -= Time.deltaTime;
+
+        // Проверяем, если оставшееся время меньше или равно 0
+        if (remainingTime <= 0f)
         {
-            DeductPoints();
-    
-        }
-        else if (!animationEnded && isRightChoice)
-        {
-            AddPoints();
-           
+            if (!hasMadeChoice)
+            {
+                // Если игрок не сделал выбор, вычитаем штрафные очки
+                DeductPoints();
+            }
+
+            // Сбрасываем флаг выбора и обновляем время
+            hasMadeChoice = false;
+            remainingTime = animationDuration;
+            animator.Play("New Animation", -1, 0f);
+        } else if (hasMadeChoice) { 
+            if (DoctorController.isRightChoice)
+            {
+                AddPoints();
+            } else if (!DoctorController.isRightChoice)
+            {
+                DeductPoints();
+            }
+            hasMadeChoice = false;
         }
     }
 
-    // Вызывается, когда игрок совершает правильное действие во время анимации
     public void AddPoints()
     {
         score += reward;
-        scoreText.text = "Score: " + score;
+        UpdateScoreText();
+        animator.Play("New Animation", -1, 0f);
+
     }
 
-    // Вызывается, когда игрок не успевает совершить действие во время анимации
-    private void DeductPoints()
+    public void DeductPoints()
     {
         score -= penalty;
-        scoreText.text = "Score: " + score;
+        UpdateScoreText();
+        animator.Play("New Animation", -1, 0f);
+
+    }
+
+    private void UpdateScoreText()
+    {
+        scoreText.text = $"Score: {score}";
     }
 }
+

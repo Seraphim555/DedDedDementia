@@ -1,19 +1,25 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DoctorController : MonoBehaviour
 {
-   [SerializeField] private GameObject patientPrefab;
+    [SerializeField] private GameObject patientPrefab;
+    [SerializeField] private GameObject medicalPanel;
     private GameObject patientInstance = null;
     private PersonController personController = null;
     public float moveSpeed = 5f;
 
+    public static bool isRightChoice = false;
+
 
     private void Start()
     {
+
         patientInstance = Instantiate(patientPrefab);
 
         personController = patientInstance.GetComponent<PersonController>();
+
     }
 
     private void Update()
@@ -26,6 +32,7 @@ public class DoctorController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
+
             SendLeft();
             
         }
@@ -40,10 +47,26 @@ public class DoctorController : MonoBehaviour
     public void SendLeft()
     {
         personController.MoveLeft();
+        ScoreManager.hasMadeChoice = true;
+        isRightChoice = personController.isRightChoice;
+
     }
 
     public void SendRight()
     {
         personController.MoveRight();
+        ScoreManager.hasMadeChoice = true;
+        isRightChoice = personController.isRightChoice;
+    }
+
+
+    public void GetMedicalCardInfo()
+    {
+        return;
+    }
+
+    public void HideMedicalCardInfo()
+    {
+        return;
     }
 }

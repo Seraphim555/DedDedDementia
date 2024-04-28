@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 
 
@@ -71,7 +72,9 @@ public class Person
     public string[] Diseases { get; private set; }
     public bool Dementia { get; private set; }
 
-    public Person(string name, DateTime dateOfBirth, bool gender, Address address,  string[] diseases, string description, bool dementia)
+    public MedicalCard MedicalCard { get; private set; }
+
+    public Person(string name, DateTime dateOfBirth, bool gender, Address address,  string[] diseases, string description, bool dementia, MedicalCard medicalCard)
     {
         Name = name;
         DateOfBirth = dateOfBirth;
@@ -80,6 +83,7 @@ public class Person
         Dementia = dementia;
         Diseases = diseases;
         Description = description;
+        MedicalCard = medicalCard;
 
     }
 
@@ -102,14 +106,18 @@ public class Person
 
         // Generate random dementia status
         bool randomDementia = UnityEngine.Random.Range(0, 2) == 0; // 50% chance of having dementia
+        string[] diseases = GenerateRandomDiseases();
+        string description = GenerateRandomDescription(randomDementia, randomGender);
+
+        MedicalCard medicalCard = new MedicalCard(randomAddress.GetAddressString(), randomDateOfBirth.ToShortDateString(), randomName, description, diseases);
 
         // Create and return the Person object
-        return new Person(randomName, randomDateOfBirth, randomGender, randomAddress, GenerateRandomDiseases(), null, randomDementia);
+        return new Person(randomName, randomDateOfBirth, randomGender, randomAddress, GenerateRandomDiseases(), null, randomDementia, medicalCard);
     }
 
     private static string GenerateRandomDescription(bool hasDementia, bool gender)
     {
-        string filePath = "CoolStoryBob";
+        string filePath = "./Assets/CoolStoryBob";
 
         if (hasDementia)
         {
@@ -149,7 +157,7 @@ public class Person
         };
 
         // Количество заболеваний, которые нужно сгенерировать
-        int numberOfDiseases = UnityEngine.Random.Range(1, 5); // Генерируем от 1 до 4 заболеваний
+        int numberOfDiseases = UnityEngine.Random.Range(1, 3); // Генерируем от 1 до 4 заболеваний
 
         // Создаем массив для хранения сгенерированных заболеваний
         string[] generatedDiseases = new string[numberOfDiseases];
@@ -157,7 +165,7 @@ public class Person
         // Выбираем случайные заболевания из списка
         for (int i = 0; i < numberOfDiseases; i++)
         {
-            int randomIndex = UnityEngine.Random.Range(0, mentalDisorders.Length);
+            int randomIndex = UnityEngine.Random.Range(0, mentalDisorders.Length - 1);
             generatedDiseases[i] = mentalDisorders[randomIndex];
         }
 
