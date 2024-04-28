@@ -9,6 +9,13 @@ public class PersonController : MonoBehaviour
 
     [SerializeField] Animator animator;
 
+    [SerializeField] AudioClip rightChoiceDementiONAudio;
+    [SerializeField] AudioClip rightChoiceDementiOFFAudio;
+    [SerializeField] AudioClip wrongChoiceDementiONAudio;
+    [SerializeField] AudioClip wrongChoiceDementiOFFAudio;
+
+    [SerializeField] AudioSource audioSource;
+        
     private bool moveLeft;
     private bool moveRight;
     public static bool isRightChoice = true;
@@ -16,39 +23,46 @@ public class PersonController : MonoBehaviour
     private void Start()
     {
         person = Person.GenerateRandomPerson();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
-        if (moveRight) {
+        if (moveRight)
+        {
             if (transform.position != endRightPosition)
             {
                 animator.SetBool("canWalk", true);
                 transform.position = Vector3.MoveTowards(transform.position, endRightPosition, moveSpeed * Time.deltaTime);
                 isRightChoice = true;
+                audioSource.PlayOneShot(rightChoiceDementiONAudio);
             }
             else
             {
                 Destroy(gameObject);
                 isRightChoice = false;
-            }
-        } else if (moveLeft)
-        {
-            if (transform.position != endLeftPosition)
-            {
-                animator.SetBool("canWalk", true);
-                transform.localScale = Vector3.left;
-                transform.position = Vector3.MoveTowards(transform.position, endLeftPosition, moveSpeed * Time.deltaTime);
-                isRightChoice=true;
-            }
-            else 
-            { 
-                Destroy(gameObject);
-                isRightChoice = false;
+                audioSource.PlayOneShot(wrongChoiceDementiONAudio);
             }
         }
-    }
+        else if (moveLeft)
+        {
+            if (transform.position != endLeftPosition)
 
+                animator.SetBool("canWalk", true);
+            transform.localScale = Vector3.left;
+            transform.position = Vector3.MoveTowards(transform.position, endLeftPosition, moveSpeed * Time.deltaTime);
+            isRightChoice = true;
+            audioSource.PlayOneShot(rightChoiceDementiOFFAudio);
+        }
+        else
+        {
+            Destroy(gameObject);
+            isRightChoice = false;
+            audioSource.PlayOneShot(wrongChoiceDementiOFFAudio);
+        }
+        
+    }
+    
     public void MoveLeft()
     {
         moveLeft = true;
